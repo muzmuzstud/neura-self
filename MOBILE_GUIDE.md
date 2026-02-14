@@ -33,7 +33,6 @@ Run NeuraSelf on your Android phone using Termux.
         cd neura-self
         ```
 
-        *(Replace the link above if you have your own private repo link, or just copy your files to a folder)*
 
     * **Install Requirements:**
 
