@@ -88,7 +88,7 @@ async def main():
         
         if choice == "2":
             import neura_setup
-            neura_setup.account_manager()
+            await neura_setup.account_manager()
             continue
         elif choice == "3":
             console.print("\n[yellow]Shutting down. See you next time![/yellow]")
