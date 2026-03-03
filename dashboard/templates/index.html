@@ -1,0 +1,613 @@
+<!--
+  This file is part of NeuraSelf-UwU.
+  Copyright (c) 2025-Present Routo
+
+  NeuraSelf-UwU is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  You should have received a copy of the GNU General Public License
+  along with NeuraSelf-UwU. If not, see <https://www.gnu.org/licenses/>.
+-->
+
+
+
+
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neura Self</title>
+    <link rel="icon" type="image/x-icon" href="/static/assets/neura.ico">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;600&family=Roboto+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #ff0000 !important;
+            box-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000 inset;
+            animation: pulseInput 1.5s infinite alternate;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes pulseInput {
+            0% {
+                box-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000 inset;
+            }
+
+            100% {
+                box-shadow: 0 0 15px #ff0000, 0 0 25px #ff0000 inset;
+            }
+        }
+
+        .captcha-img-container {
+            transition: transform 0.3s ease;
+            cursor: zoom-in;
+            display: inline-block;
+        }
+
+        .captcha-img-container:hover {
+            transform: scale(1.5);
+            z-index: 1000;
+            position: relative;
+        }
+
+        .btn-captcha-submit:hover {
+            background: #00d16e;
+            transform: translateY(-2px);
+        }
+
+        .kpi-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(255, 31, 31, 0.2);
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff1f1f;
+        }
+
+        .glowing-text {
+            color: #ff1f1f;
+            text-shadow: 0 0 10px rgba(255, 31, 31, 0.7);
+            animation: pulseGlow 2s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            from {
+                text-shadow: 0 0 10px rgba(255, 31, 31, 0.4);
+            }
+
+            to {
+                text-shadow: 0 0 20px rgba(255, 31, 31, 0.9);
+            }
+        }
+
+        .custom-select-wrapper {
+            position: relative;
+            user-select: none;
+            width: 100%;
+        }
+
+        .custom-select {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .custom-select:hover {
+            border-color: #ff1f1f;
+            box-shadow: 0 0 10px rgba(255, 31, 31, 0.2);
+        }
+
+        .custom-options {
+            position: absolute;
+            top: 110%;
+            left: 0;
+            right: 0;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .custom-options.open {
+            display: block;
+        }
+
+        .custom-option {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .custom-option:hover {
+            background: rgba(255, 31, 31, 0.2);
+            color: #fff;
+        }
+
+        .custom-option.selected {
+            background: rgba(255, 31, 31, 0.1);
+            color: #ff1f1f;
+        }
+
+        .kpi-icon.cmds {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        /* Grid System updates for responsiveness */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 0 20px 20px 20px;
+        }
+
+        .charts-row-top {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            min-height: 350px;
+            padding: 0 20px 20px 20px;
+        }
+
+        .charts-row-bottom {
+            display: flex;
+            gap: 20px;
+            min-height: 300px;
+            padding: 0 20px 20px 20px;
+            flex-wrap: wrap;
+            /* Allows wrapping on smaller screens */
+        }
+
+        .chart-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 300px;
+            /* Crucial for flex-wrap */
+        }
+
+        .chart-box h3 {
+            margin: 0 0 15px 0;
+            color: #ddd;
+            font-size: 1rem;
+        }
+
+        .chart-container {
+            flex: 1;
+            position: relative;
+            min-height: 200px;
+        }
+
+        .top-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            /* Allow top controls to wrap */
+        }
+
+        /* Responsive Media Queries */
+        @media (max-width: 1200px) {
+            .analytics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .charts-row-top {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kpi-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .kpi-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .account-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #333;
+        }
+
+        .kpi-data {
+            transition: opacity 0.2s ease;
+        }
+
+        .kpi-data:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body class="active-dash-header">
+
+    <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="mobile-top-controls">
+        <button class="mobile-control-btn gold" onclick="action('cash', this)" title="Check Cash">
+            <i class="fa-solid fa-coins"></i>
+        </button>
+        <button class="mobile-control-btn green" onclick="action('start', this)" title="Start Bot">
+            <i class="fa-solid fa-play"></i>
+        </button>
+        <button class="mobile-control-btn red" onclick="action('stop', this)" title="Stop Bot">
+            <i class="fa-solid fa-stop"></i>
+        </button>
+    </div>
+
+    <div class="sidebar-overlay" onclick="toggleMobileMenu()"></div>
+
+    <div class="app-shell" style="display:flex; height:100vh;">
+        <aside class="sidebar">
+            <div class="brand">
+                <img src="/static/assets/neuralogo.png" alt="NeuraSelf" style="height: 32px; margin-right: 8px;">
+                <span class="brand-main"
+                    style="background:linear-gradient(90deg, #ff1f1f, #880000); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent;">NEURA</span>
+                <span class="brand-sub" style="color:#ff1f1f">SELF</span>
+            </div>
+
+            <div class="account-selector-container" style="padding: 0 20px 20px 20px;">
+                <label style="color:#aaa; font-size:0.8rem; display:block; margin-bottom:5px;">ACTIVE ACCOUNT</label>
+                <div class="custom-select-wrapper">
+                    <div class="custom-select" id="accountDropdownHeader" onclick="toggleAccountDropdown()">
+                        <div class="selected-account">
+                            <i class="fa-brands fa-discord"></i>
+                            <span id="currentAccountName">Loading...</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="custom-options" id="accountOptions">
+                    </div>
+                </div>
+            </div>
+
+            <nav class="nav-links">
+                <a class="nav-item active" onclick="nav('dash', this)"><i class="fa-solid fa-chart-pie"></i>
+                    Dashboard</a>
+                <a class="nav-item" onclick="nav('config', this)"><i class="fa-solid fa-sliders"></i> Configuration</a>
+                <a class="nav-item" onclick="nav('security', this)"><i class="fa-solid fa-shield-halved"></i>
+                    Security</a>
+
+                <a class="nav-item" onclick="nav('history', this)"><i class="fa-solid fa-clock-rotate-left"></i>
+                    History</a>
+                <a class="nav-item" onclick="nav('logs', this)"><i class="fa-solid fa-terminal"></i> Terminal</a>
+                <a class="nav-item" onclick="location.href='/logout'" style="color: #ff4444 !important;"><i
+                        class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </nav>
+
+            <div style="margin-top:auto">
+                <div class="status-indicator">
+                    <div class="ping-dot" id="statusDot"></div>
+                    <span id="botStatus">ONLINE</span>
+                </div>
+                <div class="social-links">
+                    <a href="https://github.com/routo-loop" target="_blank"><i class="fa-brands fa-github social-btn"
+                            title="GitHub"></i></a>
+                    <a href="https://discord.gg/Sb4StkvbX7" target="_blank"><i class="fa-brands fa-discord social-btn"
+                            title="Discord"></i></a>
+                    <a href="https://www.youtube.com/@dev1-9?sub_confirmation=1" target="_blank"><i
+                            class="fa-brands fa-youtube social-btn" title="YouTube"></i></a>
+                </div>
+                <div class="version glowing-text">v2.0.0</div>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <div id="dash" class="active-view view">
+                <div class="top-bar">
+                    <h1>System Overview</h1>
+                    <div class="top-controls">
+                        <button class="btn-control gold" onclick="action('cash', this)"><i
+                                class="fa-solid fa-coins"></i>
+                            CHECK CASH</button>
+                        <button class="btn-control green" onclick="action('start', this)"><i
+                                class="fa-solid fa-play"></i>
+                            START</button>
+                        <button class="btn-control red" onclick="action('stop', this)"><i class="fa-solid fa-stop"></i>
+                            STOP</button>
+                    </div>
+                </div>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon cash"><i class="fa-solid fa-coins"></i></div>
+                        <div class="kpi-data" style="cursor:pointer" onclick="action('cash', this)">
+                            <h3>Balance</h3>
+                            <p id="cash">0</p>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon rate"><i class="fa-solid fa-clock"></i></div>
+                        <div class="kpi-data">
+                            <h3>Uptime</h3>
+                            <p id="uptimeDisplay">00:00:00</p>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon cmds"><i class="fa-solid fa-gun"></i></div>
+                        <div class="kpi-data">
+                            <h3>Hunts Today</h3>
+                            <p id="huntsToday">0 <span style="font-size:0.5em; color:var(--success);"
+                                    id="huntsSession">(0 this session)</span></p>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon cmds"><i class="fa-brands fa-battle-net"></i></div>
+                        <div class="kpi-data">
+                            <h3>Battles Today</h3>
+                            <p id="battlesToday">0 <span style="font-size:0.5em; color:#3b82f6;" id="battlesSession">(0
+                                    this session)</span></p>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon rate"><i class="fa-solid fa-bolt"></i></div>
+                        <div class="kpi-data">
+                            <h3>CPM</h3>
+                            <p id="cpm">0</p>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon cmds"><i class="fa-solid fa-comments"></i></div>
+                        <div class="kpi-data">
+                            <h3>OwO Sent</h3>
+                            <p id="totalOwO">0 <span style="font-size:0.5em; color:#a855f7;" id="owoSession">(0 this
+                                    session)</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-row-top" style="padding: 0;">
+                    <div class="chart-box" style="flex:2;">
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                    <div class="chart-box" style="flex:1;">
+                        <h2 style="font-size:1.1rem; color:var(--primary); margin:0 0 10px 0;"><i
+                                class="fa-solid fa-clock-rotate-left"></i> Scheduled Actions</h2>
+                        <div id="schedulerList"
+                            style="flex:1; overflow-y:auto; padding-right:5px; display:flex; flex-direction:column; gap:8px;">
+                            <div
+                                style="color:#666; font-style:italic; font-size:0.9rem; text-align:center; padding-top:20px;">
+                                Waiting for scheduler data...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="quest-section"
+                    style="margin-top:20px; background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:20px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h2 style="font-size:1.2rem; color:var(--primary); margin:0;"><i
+                                class="fa-solid fa-list-check"></i> Active Quests</h2>
+                        <div id="nextQuestTimer"
+                            style="font-family:var(--font-mono); font-size:0.8rem; background:rgba(255,255,255,0.05); padding:5px 10px; border-radius:4px; color:#aaa;">
+                            Next quest: Loading...
+                        </div>
+                    </div>
+                    <div id="questList"
+                        style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:15px;">
+                    </div>
+                </div>
+            </div>
+
+            <div id="config" class="view">
+                <div class="top-bar">
+                    <h1>Configuration</h1>
+                    <div class="top-controls">
+                        <button class="btn-control green" onclick="saveAllConfigs()">
+                            <i class="fa-solid fa-floppy-disk"></i> SAVE SETTINGS
+                        </button>
+                    </div>
+                </div>
+
+                <div id="settings-grid" class="settings-grid-layout">
+
+                </div>
+            </div>
+
+            <div id="security" class="view">
+                <div class="top-bar">
+                    <h1>Security Center</h1>
+                    <div class="top-controls">
+                        <button class="btn-control input-dark" onclick="testSecurity(this)"><i
+                                class="fa-solid fa-flask"></i> TEST SYSTEMS</button>
+                        <button class="btn-control green" onclick="resumeBot()"><i class="fa-solid fa-play"></i> RESUME
+                            BOT</button>
+                    </div>
+                </div>
+
+                <div id="securityAlert" class="alert-box" style="display:none; margin-bottom: 20px;">
+                    <div class="alert-msg">
+                        <i class="fa-solid fa-triangle-exclamation"></i> SECURITY TRIGGERED: BOT PAUSED
+                    </div>
+                    <div id="captchaMsg"
+                        style="color:#aaa; font-family:var(--font-mono); margin-bottom:20px; font-size:0.9rem; border:1px solid #333; padding:10px; border-radius:4px; max-width:80%; text-align:center;">
+
+                    </div>
+                </div>
+
+                <div class="security-stats">
+                    <div class="sec-stat-box">
+                        <div class="sec-val" id="sec-captchas">0</div>
+                        <div class="sec-lbl">Solved</div>
+                    </div>
+                    <div class="sec-stat-box">
+                        <div class="sec-val" id="sec-bans" style="color:var(--danger)">0</div>
+                        <div class="sec-lbl">Bans</div>
+                    </div>
+                    <div class="sec-stat-box">
+                        <div class="sec-val" id="sec-warns" style="color:var(--warning)">0</div>
+                        <div class="sec-lbl">Warns</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="history" class="view">
+                <div class="top-bar">
+                    <h1>Detailed Analytics & History</h1>
+                    <div class="top-controls">
+                        <input type="date" id="historyStartDate" class="field-input"
+                            style="padding:8px; border-radius:6px; background:rgba(255,255,255,0.05); color:#fff; border:1px solid #333;"
+                            onchange="loadHistory()">
+                        <span style="color:#aaa;">to</span>
+                        <input type="date" id="historyEndDate" class="field-input"
+                            style="padding:8px; border-radius:6px; background:rgba(255,255,255,0.05); color:#fff; border:1px solid #333;"
+                            onchange="loadHistory()">
+                        <select id="session-select" class="session-select" onchange="renderCharts()">
+                            <option value="all">ALL SESSIONS IN RANGE</option>
+                        </select>
+                        <button class="btn-control input-dark" onclick="loadHistory()"><i class="fa-solid fa-sync"></i>
+                            REFRESH</button>
+                    </div>
+                </div>
+
+                <div class="analytics-grid">
+                    <div class="kpi-card" style="flex-direction:column; align-items:flex-start;">
+                        <div style="color:var(--text-muted); font-size:0.9em; margin-bottom:10px;"><i
+                                class="fa-solid fa-layer-group"></i> TOTAL SESSIONS</div>
+                        <div id="total-sessions"
+                            style="font-size:2.5em; font-weight:bold; color:var(--primary); font-family:var(--font-mono);">
+                            0</div>
+                    </div>
+                    <div class="kpi-card" style="flex-direction:column; align-items:flex-start;">
+                        <div style="color:var(--text-muted); font-size:0.9em; margin-bottom:10px;"><i
+                                class="fa-solid fa-gun"></i> ALL-TIME HUNTS</div>
+                        <div id="total-hunts"
+                            style="font-size:2.5em; font-weight:bold; color:var(--success); font-family:var(--font-mono);">
+                            0</div>
+                    </div>
+                    <div class="kpi-card" style="flex-direction:column; align-items:flex-start;">
+                        <div style="color:var(--text-muted); font-size:0.9em; margin-bottom:10px;"><i
+                                class="fa-brands fa-battle-net"></i> ALL-TIME BATTLES</div>
+                        <div id="total-battles"
+                            style="font-size:2.5em; font-weight:bold; color:#3b82f6; font-family:var(--font-mono);">0
+                        </div>
+                    </div>
+                    <div class="kpi-card" style="flex-direction:column; align-items:flex-start;">
+                        <div style="color:var(--text-muted); font-size:0.9em; margin-bottom:10px;"><i
+                                class="fa-solid fa-terminal"></i> TOTAL COMMANDS</div>
+                        <div id="total-cmds"
+                            style="font-size:2.5em; font-weight:bold; color:#fff; font-family:var(--font-mono);">0</div>
+                    </div>
+                </div>
+
+                <div class="charts-row-top">
+                    <div class="chart-box">
+                        <h3><i class="fa-solid fa-chart-column"></i> Session Performance Timeline</h3>
+                        <div class="chart-container">
+                            <canvas id="sessionChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-box">
+                        <h3><i class="fa-solid fa-chart-pie"></i> Activity Distribution</h3>
+                        <div class="chart-container" style="display:flex; justify-content:center; align-items:center;">
+                            <canvas id="pieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-row-bottom">
+                    <div class="chart-box">
+                        <h3><i class="fa-solid fa-money-bill-trend-up"></i> Cash Growth Over Time</h3>
+                        <div class="chart-container">
+                            <canvas id="cashHistoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-box">
+                        <h3><i class="fa-solid fa-shield-halved"></i> Security Metrics</h3>
+                        <div class="chart-container"
+                            style="display:flex; align-items:center; justify-content:space-around;">
+                            <div style="text-align:center;">
+                                <div style="font-size:3rem; color:var(--primary); font-family:var(--font-mono); font-weight:bold;"
+                                    id="totalCaptchasSolved">0</div>
+                                <div style="color:#888; font-size:0.9rem;">Captchas Defeated</div>
+                            </div>
+                            <div style="width:150px; height:150px; position:relative;">
+                                <canvas id="captchaSuccessChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="logs" class="view">
+                <div class="top-bar">
+                    <h1>System Terminal</h1>
+                    <button class="btn-control" onclick="update()">
+                        <i class="fa-solid fa-rotate"></i> RELOAD LOGS
+                    </button>
+                </div>
+                <div id="term" class="terminal-window"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/js/script.js"></script>
+</body>
+
+</html>
