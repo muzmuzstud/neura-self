@@ -82,6 +82,7 @@ async def verify_token(token, channel_ids=None):
         await client.close()
 
     try:
+        # Use a timeout for start
         await asyncio.wait_for(client.start(token), timeout=20)
     except asyncio.TimeoutError:
         await client.close()
@@ -198,7 +199,7 @@ def show_accounts(acc_list):
     
     console.print(table)
 
-def account_manager():
+async def account_manager():
     accounts = load_accounts()
     while True:
         clean_screen()
@@ -224,10 +225,7 @@ def account_manager():
             channel_ids = channels_raw.split()
 
             with console.status("[bold cyan]Accessing Discord..."):
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-                valid, user, v_channels = loop.run_until_complete(verify_token(token, channel_ids))
-                loop.close()
+                valid, user, v_channels = await verify_token(token, channel_ids)
             
             if valid:
                 console.print(f"[green][✓] Verified: {user}[/green]")
@@ -262,7 +260,7 @@ def account_manager():
             time.sleep(1)
         else: break
 
-def setup_menu():
+async def setup_menu():
     while True:
         clean_screen()
         console.print(neura_Ascii)
@@ -278,10 +276,10 @@ def setup_menu():
             console.print("\n[green][*] Running Neura-Self..[/green]")
             time.sleep(1)
             import neura
-            asyncio.run(neura.main())
+            await neura.main()
             break
         elif choice == "2":
-            account_manager()
+            await account_manager()
         elif choice == "3":
             run_bootstrap()
             input("\nEverything is ready. Press Enter to go back.")
@@ -291,4 +289,4 @@ def setup_menu():
 
 if __name__ == "__main__":
     run_bootstrap()
-    setup_menu()
+    asyncio.run(setup_menu())
