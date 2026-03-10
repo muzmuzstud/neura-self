@@ -82,8 +82,7 @@ async def verify_token(token, channel_ids=None):
         await client.close()
 
     try:
-        # Use a timeout for start
-        await asyncio.wait_for(client.start(token), timeout=20)
+        await asyncio.wait_for(client.start(token), timeout=60)
     except asyncio.TimeoutError:
         await client.close()
         return False, "Validation Timeout", []
