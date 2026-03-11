@@ -228,7 +228,12 @@ function toggleMod(p, el, ev) {
 }
 function updateDeepVal(p, v) {
     let val = v;
-    if (!isNaN(v) && v !== "") {
+    const arrayFields = ['channels', 'targets', 'active_commands'];
+    const fieldName = p.split('.').pop();
+
+    if (arrayFields.includes(fieldName)) {
+        val = v.split(',').map(item => item.trim()).filter(item => item !== "");
+    } else if (!isNaN(v) && v !== "") {
         val = (v.length < 15) ? Number(v) : v;
     }
     setDeep(currentConfig, p.split('.'), val);
