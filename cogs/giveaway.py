@@ -46,7 +46,12 @@ class Giveaway(commands.Cog):
         if not cfg.get('enabled', False): 
             return
 
-        target_channels = [str(c) for c in cfg.get('channels', [])]
+        raw_channels = cfg.get('channels', [])
+        if isinstance(raw_channels, str):
+            target_channels = [c.strip() for c in raw_channels.split(',') if c.strip().isdigit()]
+        else:
+            target_channels = [str(c) for c in raw_channels if str(c).strip().isdigit()]
+
         if str(message.channel.id) not in target_channels:
             return
 
@@ -100,7 +105,12 @@ class Giveaway(commands.Cog):
         cfg = self.bot.config.get('commands', {}).get('giveaway', {})
         if not cfg.get('enabled', False): return
 
-        target_channels = [str(c) for c in cfg.get('channels', [])]
+        raw_channels = cfg.get('channels', [])
+        if isinstance(raw_channels, str):
+            target_channels = [c.strip() for c in raw_channels.split(',') if c.strip().isdigit()]
+        else:
+            target_channels = [str(c) for c in raw_channels if str(c).strip().isdigit()]
+
         if not target_channels: return
 
         self.bot.log("SYS", f"Scanning for missed giveaways as {self.bot.username}...")
